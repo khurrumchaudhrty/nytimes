@@ -2,24 +2,16 @@ package api.rlabs.com.nytimes.topnews.parser;
 
 
 
-import android.app.Application;
 import android.content.Context;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import api.rlabs.com.nytimes.controller.CallBack;
 import api.rlabs.com.nytimes.controller.NetworkController;
@@ -27,7 +19,7 @@ import api.rlabs.com.nytimes.topnews.model.TopNews;
 import api.rlabs.com.nytimes.topnews.model.Results;
 import api.rlabs.com.nytimes.utility.Constants;
 import api.rlabs.com.nytimes.utility.Source;
-import api.rlabs.com.nytimes.utility.UICallBacks;
+import api.rlabs.com.nytimes.topnews.UICallBacks;
 import api.rlabs.com.nytimes.utility.Utility;
 
 /**
@@ -125,6 +117,7 @@ public class TopNewsParser implements CallBack{
             }
 
             if(context!=null){
+                context.updateData(data);
                 //update UI
             }
         }

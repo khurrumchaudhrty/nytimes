@@ -7,12 +7,16 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.List;
+
 import api.rlabs.com.nytimes.R;
+import api.rlabs.com.nytimes.topnews.model.FeedAdaptor;
+import api.rlabs.com.nytimes.topnews.model.Results;
 import api.rlabs.com.nytimes.topnews.parser.TopNewsParser;
-import api.rlabs.com.nytimes.utility.UICallBacks;
 
 /**
  * Working with the NYT Api
@@ -20,50 +24,57 @@ import api.rlabs.com.nytimes.utility.UICallBacks;
 public class TopNews extends ActionBarActivity implements UICallBacks {
 
 
-    ListView fedlist;
-    TextView msg;
+    private ListView feedlist;
+    private FeedAdaptor feedAdaptor;
+    //add some adapter
 
+    private TextView msgText;
+    private LinearLayout panel;
+
+    private FeedHandler feedhandler;
+
+    private final static int UPDATELIST = 0;
+    private final static int INITIALSETUP = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top_news);
+        feedhandler = new FeedHandler();
+
+
         setupScreen();
 
     }
 
-    private void setupScreen() {
-        // add list layout
-        // add adaptor
-        // initialize handler
-        // start show the data from the parser
-
-
-        TopNewsParser tpn = new TopNewsParser((UICallBacks) this);
-        tpn.Start(getApplicationContext());
+    public void sendMessage(int what){
+        feedhandler.sendEmptyMessage(what);
     }
 
-    class ListHandler extends Handler {
+    private void setupScreen() {
+        sendMessage(INITIALSETUP);
+
+        // add adaptor
+    }
+
+    class FeedHandler extends Handler {
         public synchronized void handleMessage(Message msg) {
             switch (msg.what){
                 case UPDATELIST:
-                    if(listData!=null) {
+                    feedlist.setAdapter(feedAdaptor);
+                    feedlist.setVisibility(View.VISIBLE);
+                    panel.setVisibility(View.GONE);
 
-                        listWidget.setVisibility(ListView.VISIBLE);
-                        panel.setVisibility(View.GONE);
-                        msage.setVisibility(TextView.GONE);
-                        listWidget.setAdapter(adapter);
-                        listWidget.smoothScrollToPosition(0);// bringing the user to top // really not needed here :)
+                    break;
+                case INITIALSETUP:
+                    // add list layout
+                    feedlist = (ListView) TopNews.this.findViewById(R.id.feed);
+                    msgText = (TextView) TopNews.this.findViewById(R.id.msg);
+                    panel = (LinearLayout) TopNews.this.findViewById(R.id.panel);
 
-                    }
-                    else{
-                        listWidget.setAdapter(null);
-                        listWidget.setVisibility(ListView.GONE);
-                        panel.setVisibility(View.VISIBLE);
-                        msage.setVisibility(TextView.VISIBLE);
-                    }
-                    //listWidget.
-
+                    // start show the data from the parser
+                    TopNewsParser tpn = new TopNewsParser(TopNews.this);
+                    tpn.Start(getApplicationContext());
                     break;
 
             }
@@ -96,7 +107,9 @@ public class TopNews extends ActionBarActivity implements UICallBacks {
     }
 
     @Override
-    public void updateData(Message msg) {
-        //send message to handler for updating the UI
+    public void updateData(List<Results> data) {
+        feedAdaptor = new FeedAdaptor(getApplicationContext(), data);
+
+        sendMessage(UPDATELIST);
     }
 }

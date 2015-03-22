@@ -2,4 +2,6 @@
     <string name="app_name">nytimes</string>
     <string name="loading">Loading</string>
     <string name="noresults">no result found</string>
+    <string name="action_settings">no menu here</string>
+
 </resources>
