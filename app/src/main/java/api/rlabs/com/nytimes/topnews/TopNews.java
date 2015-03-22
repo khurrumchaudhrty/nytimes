@@ -62,8 +62,14 @@ public class TopNews extends ActionBarActivity implements UICallBacks {
             switch (msg.what){
                 case UPDATELIST:
                     feedlist.setAdapter(feedAdaptor);
-                    feedlist.setVisibility(View.VISIBLE);
-                    panel.setVisibility(View.GONE);
+                    if(feedAdaptor.getCount()>0) {
+                        feedlist.setVisibility(View.VISIBLE);
+                        panel.setVisibility(View.GONE);
+                    }else{
+                        //write now just relying a message the
+                        // scenario could be improved with loading or problem message seperately
+                        msgText.setText(R.string.noresults);
+                    }
 
                     break;
                 case INITIALSETUP:

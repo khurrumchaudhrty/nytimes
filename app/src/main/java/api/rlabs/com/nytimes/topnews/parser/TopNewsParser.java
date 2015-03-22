@@ -8,8 +8,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,8 +47,8 @@ public class TopNewsParser implements CallBack{
         new Thread(){
             public void run(){
 
-                Utility.getCacheFolder(appcontext);
-                //if file exists in check
+               // TopNewsParser.this.processResponse(null,200,Source.FILE);
+
                 // if not schedule a download;
                 NetworkController nwct = NetworkController.getController();
                 nwct.startDownloading(TopNewsParser.this);
@@ -69,6 +75,7 @@ public class TopNewsParser implements CallBack{
      */
     @Override
     public synchronized void processResponse(InputStream content, int statusCode, Source source) {
+        System.out.print(source.toString());
         TopNews localtpNews = new TopNews();
         //we can use status code here to determine if we need to proceed or not for now ignoring it altogether
 
@@ -77,6 +84,15 @@ public class TopNewsParser implements CallBack{
         String lastReadTimeStamp = null;
 
         try {
+            if(statusCode==200){
+                if(source.equals(Source.INTERNET)){
+                    dumpFile(content);
+                }
+                //loadFromCACHE if it exists
+                content = new FileInputStream(new File(Utility.getCacheFolder((Context)context) +Constants.fileName));
+
+            }
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(content));
             StringBuilder builder = new StringBuilder();
             String fulljson = "";
@@ -84,7 +100,6 @@ public class TopNewsParser implements CallBack{
             while((inputline = reader.readLine())!=null){
                 fulljson+=inputline;
             }
-
             JSONObject jsonObject = new JSONObject(fulljson);
 
             localtpNews.setNum_results(jsonObject.getInt("num_results"));
@@ -107,21 +122,53 @@ public class TopNewsParser implements CallBack{
             localtpNews.setResults(data);
             tpNews = localtpNews;
 
+
+
             //parse the document
         }catch (Exception exception){
             exception.printStackTrace();
         }finally{
-            //dumpfile only for the valid one at the end
-            if(source.equals(Source.INTERNET)){
-                //Save the file
-            }
+            if(content!=null)
+                try {
+                    content.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
+            //dumpfile only for the valid one at the end
             if(context!=null){
                 context.updateData(data);
                 //update UI
             }
+
         }
 
+    }
+
+    private void dumpFile(InputStream content) {
+        //Save the file
+        OutputStream os = null;
+
+        try {
+
+            os = new FileOutputStream(Utility.getCacheFolder((Context) context) + Constants.fileName);
+            int read = 0;
+            byte[] bytes = new byte[1024];
+
+            while ((read = content.read(bytes)) != -1) {
+                os.write(bytes, 0, read);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                content.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
