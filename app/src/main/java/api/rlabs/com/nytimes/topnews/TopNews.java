@@ -1,10 +1,14 @@
 package api.rlabs.com.nytimes.topnews;
 
+import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import api.rlabs.com.nytimes.R;
 import api.rlabs.com.nytimes.topnews.parser.TopNewsParser;
@@ -14,6 +18,11 @@ import api.rlabs.com.nytimes.utility.UICallBacks;
  * Working with the NYT Api
  */
 public class TopNews extends ActionBarActivity implements UICallBacks {
+
+
+    ListView fedlist;
+    TextView msg;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +42,35 @@ public class TopNews extends ActionBarActivity implements UICallBacks {
         TopNewsParser tpn = new TopNewsParser((UICallBacks) this);
         tpn.Start(getApplicationContext());
     }
+
+    class ListHandler extends Handler {
+        public synchronized void handleMessage(Message msg) {
+            switch (msg.what){
+                case UPDATELIST:
+                    if(listData!=null) {
+
+                        listWidget.setVisibility(ListView.VISIBLE);
+                        panel.setVisibility(View.GONE);
+                        msage.setVisibility(TextView.GONE);
+                        listWidget.setAdapter(adapter);
+                        listWidget.smoothScrollToPosition(0);// bringing the user to top // really not needed here :)
+
+                    }
+                    else{
+                        listWidget.setAdapter(null);
+                        listWidget.setVisibility(ListView.GONE);
+                        panel.setVisibility(View.VISIBLE);
+                        msage.setVisibility(TextView.VISIBLE);
+                    }
+                    //listWidget.
+
+                    break;
+
+            }
+            //this is where we update the content and jump to UI thread BINGO !
+        }
+    }
+
 
 
     @Override
