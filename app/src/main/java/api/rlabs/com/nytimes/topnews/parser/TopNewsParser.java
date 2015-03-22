@@ -47,7 +47,7 @@ public class TopNewsParser implements CallBack{
         new Thread(){
             public void run(){
 
-               // TopNewsParser.this.processResponse(null,200,Source.FILE);
+                TopNewsParser.this.processResponse(null,200,Source.FILE);
 
                 // if not schedule a download;
                 NetworkController nwct = NetworkController.getController();
