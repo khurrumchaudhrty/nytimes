@@ -123,6 +123,11 @@ public class TopNewsParser implements CallBack{
             tpNews = localtpNews;
 
 
+            //dumpfile only for the valid one at the end
+            if(context!=null){
+                context.updateData(data);
+                //update UI
+            }
 
             //parse the document
         }catch (Exception exception){
@@ -134,13 +139,6 @@ public class TopNewsParser implements CallBack{
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-            //dumpfile only for the valid one at the end
-            if(context!=null){
-                context.updateData(data);
-                //update UI
-            }
-
         }
 
     }
