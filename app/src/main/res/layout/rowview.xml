@@ -1,0 +1,50 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="50dp"
+    android:padding="10dp"
+    android:background="@color/accent_material_light"
+    android:orientation="vertical">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="20dp"
+        android:padding="0dp"
+        android:background="@color/accent_material_light"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:paddingRight="30dp"
+            android:textStyle="bold"
+            android:text="Section"
+            android:id="@+id/section" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="SubSection"
+            android:id="@+id/subsection" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:text="Byline"
+        android:id="@+id/byline" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:maxLength="200"
+        android:textSize="23dp"
+        android:textStyle="bold"
+        android:text="Abstract"
+        android:id="@+id/abstracttext"/>
+
+</LinearLayout>
